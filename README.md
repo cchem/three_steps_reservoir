@@ -6,5 +6,10 @@
 ## 実行方法
 実装中
 
+## todo
+- アプリケーションクラスの実装
+- 水槽同士を繋ぐパイプの実装(バルブを開くとすぐに次の水槽に送られるようだと制御が簡単な可能性があるため
+- メインの水槽が空になった時の例外処理
+
 ## 参考
 [https://www.yokogawa.co.jp/library/videos/product-overviews/ai-control-3-levels/](https://www.yokogawa.co.jp/library/videos/product-overviews/ai-control-3-levels/)
