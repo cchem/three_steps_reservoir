@@ -2,10 +2,10 @@ import tkinter as tk
 
 
 class Reservoir:
-    def __init__(self, volume):
-        # self.capacity = capacity  # total volume
+    def __init__(self, capacity, volume, default_out_flow=5):
+        self.capacity = capacity  # total volume
         self.volume = volume  # current volume
-        self.out_flow_set_value = 0
+        self.out_flow_set_value = default_out_flow
         self.out_flow = 0
         self.delta = 5
 
@@ -29,14 +29,15 @@ class Reservoir:
         # 流出後の液量
         self.volume -= out_flow
         self.out_flow = out_flow
+        print(f'Volume: {self.volume}, Flow: {self.out_flow}')
 
 
 class ThreeStepsReservoir:
     def __init__(self):
-        self.main_reservoir = Reservoir(1000)
-        self.reservoir1 = Reservoir(100)
-        self.reservoir2 = Reservoir(100)
-        self.reservoir3 = Reservoir(100)
+        self.main_reservoir = Reservoir(1000, 800, default_out_flow=4)
+        self.reservoir1 = Reservoir(100, 70, default_out_flow=3)
+        self.reservoir2 = Reservoir(100, 50, default_out_flow=5)
+        self.reservoir3 = Reservoir(100, 30, default_out_flow=2)
 
     def update(self, up0, down0, up1, down1, up2, down2, up3, down3):
         self.main_reservoir.update([], up0, down0)
@@ -44,6 +45,22 @@ class ThreeStepsReservoir:
         self.reservoir2.update([self.reservoir1], up2, down2)
         self.reservoir3.update([self.reservoir2], up3, down3)
         self.main_reservoir.volume += self.reservoir3.out_flow
+
+
+class ReservoirViewer:
+    def __init__(self, left, right, top, bottom, reservoir: Reservoir):
+        self.left = left
+        self.right = right
+        self.top = top
+        self.bottom = bottom
+
+        height = self.bottom - self.top
+        self.water_top = self.top + height * (reservoir.capacity - reservoir.volume) / reservoir.capacity
+        self.reservoir = reservoir
+
+    def draw(self, can: tk.Canvas):
+        can.create_rectangle(self.left, self.top, self.right, self.bottom, fill='gray')
+        can.create_rectangle(self.left, self.water_top, self.right, self.bottom, fill='blue')
 
 
 class Application:
@@ -71,8 +88,18 @@ class Application:
         self.key_binding()
 
     def loop(self):
+        print('loop')
         self.reservoir.update(self.up0, self.down0, self.up1, self.down1, self.up2, self.down2, self.up3, self.down3)
-        self.win.after(15, self.loop)
+        rv0 = ReservoirViewer(20, 160, 20, 320, self.reservoir.main_reservoir)
+        rv1 = ReservoirViewer(180, 250, 190, 340, self.reservoir.reservoir1)
+        rv2 = ReservoirViewer(270, 340, 210, 360, self.reservoir.reservoir2)
+        rv3 = ReservoirViewer(360, 430, 230, 380, self.reservoir.reservoir3)
+
+        rv0.draw(self.can)
+        rv1.draw(self.can)
+        rv2.draw(self.can)
+        rv3.draw(self.can)
+        self.win.after(500, self.loop)
 
     def key_binding(self):
         self.win.bind('<KeyPress-Q>', self.q_key_pressed)
