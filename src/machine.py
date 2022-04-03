@@ -9,15 +9,15 @@ class Reservoir:
         self.out_flow = 0
         self.delta = 5
 
-    def update(self, previous_list, key_press_u, key_press_d):
+    def update(self, previous_list, key_press_up, key_press_down):
         # 流入後の液量の計算
         for prev in previous_list:
             self.volume += prev.out_flow
 
         # 設定流量の変更
-        if key_press_u:
+        if key_press_up:
             self.out_flow_set_value += self.delta
-        if key_press_d:
+        if key_press_down:
             self.out_flow_set_value -= self.delta
 
         # 流出量の計算
