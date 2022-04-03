@@ -54,16 +54,25 @@ class Application:
         win.resizable(False, False)
         self.win = win
 
+        can = tk.Canvas(bg='white', width=620, height=492)
+        can.place(x=10, y=10)
+        self.can = can
+
+        self.reservoir = ThreeStepsReservoir()
+
+        self.up0 = False
+        self.down0 = False
+        self.up1 = False
+        self.down1 = False
+        self.up2 = False
+        self.down2 = False
+        self.up3 = False
+        self.down3 = False
         self.key_binding()
 
-        self.q_key = False
-        self.a_key = False
-        self.w_key = False
-        self.s_key = False
-        self.e_key = False
-        self.d_key = False
-        self.r_key = False
-        self.f_key = False
+    def loop(self):
+        self.reservoir.update(self.up0, self.down0, self.up1, self.down1, self.up2, self.down2, self.up3, self.down3)
+        self.win.after(15, self.loop)
 
     def key_binding(self):
         self.win.bind('<KeyPress-Q>', self.q_key_pressed)
@@ -85,49 +94,58 @@ class Application:
         self.win.bind('<KeyRelease-F>', self.f_key_released)
 
     def q_key_pressed(self, _):
-        self.q_key = True
+        self.up0 = True
 
     def a_key_pressed(self, _):
-        self.a_key = True
+        self.down0 = True
 
     def w_key_pressed(self, _):
-        self.w_key = True
+        self.up1 = True
 
     def s_key_pressed(self, _):
-        self.s_key = True
+        self.down1 = True
 
     def e_key_pressed(self, _):
-        self.e_key = True
+        self.up2 = True
 
     def d_key_pressed(self, _):
-        self.d_key = True
+        self.down2 = True
 
     def r_key_pressed(self, _):
-        self.r_key = True
+        self.up3 = True
 
     def f_key_pressed(self, _):
-        self.f_key = True
+        self.down3 = True
 
     def q_key_released(self, _):
-        self.q_key = False
+        self.up0 = False
 
     def a_key_released(self, _):
-        self.a_key = False
+        self.down0 = False
 
     def w_key_released(self, _):
-        self.w_key = False
+        self.up1 = False
 
     def s_key_released(self, _):
-        self.s_key = False
+        self.down1 = False
 
     def e_key_released(self, _):
-        self.e_key = False
+        self.up2 = False
 
     def d_key_released(self, _):
-        self.d_key = False
+        self.down2 = False
 
     def r_key_released(self, _):
-        self.r_key = False
+        self.up3 = False
 
     def f_key_released(self, _):
-        self.f_key = False
+        self.down3 = False
+
+    def run(self):
+        self.loop()
+        self.win.mainloop()
+
+
+if __name__ == '__main__':
+    application = Application()
+    application.run()
