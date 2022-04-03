@@ -2,12 +2,13 @@ import tkinter as tk
 
 
 class Reservoir:
-    def __init__(self, capacity, volume, default_out_flow=5):
+    def __init__(self, capacity, volume, default_out_flow=5, name=''):
         self.capacity = capacity  # total volume
         self.volume = volume  # current volume
         self.out_flow_set_value = default_out_flow
         self.out_flow = 0
         self.delta = 5
+        self.name = name
 
     def update(self, previous_list, key_press_up, key_press_down):
         # 流入後の液量の計算
@@ -21,7 +22,7 @@ class Reservoir:
             self.out_flow_set_value -= self.delta
 
         # 流出量の計算
-        if self.out_flow_set_value < self.volume:
+        if self.out_flow_set_value > self.volume:
             out_flow = self.volume
         else:
             out_flow = self.out_flow_set_value
@@ -29,15 +30,15 @@ class Reservoir:
         # 流出後の液量
         self.volume -= out_flow
         self.out_flow = out_flow
-        print(f'Volume: {self.volume}, Flow: {self.out_flow}')
+        print(f'Reservoir({self.name}), Volume: {self.volume}, Flow: {self.out_flow}')
 
 
 class ThreeStepsReservoir:
     def __init__(self):
-        self.main_reservoir = Reservoir(1000, 800, default_out_flow=4)
-        self.reservoir1 = Reservoir(100, 70, default_out_flow=3)
-        self.reservoir2 = Reservoir(100, 50, default_out_flow=5)
-        self.reservoir3 = Reservoir(100, 30, default_out_flow=2)
+        self.main_reservoir = Reservoir(1000, 800, default_out_flow=4, name='Main')
+        self.reservoir1 = Reservoir(100, 70, default_out_flow=3, name='#1')
+        self.reservoir2 = Reservoir(100, 50, default_out_flow=5, name='#2')
+        self.reservoir3 = Reservoir(100, 30, default_out_flow=2, name='#3')
 
     def update(self, up0, down0, up1, down1, up2, down2, up3, down3):
         self.main_reservoir.update([], up0, down0)
