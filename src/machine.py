@@ -66,23 +66,23 @@ class Application:
         self.f_key = False
 
     def key_binding(self):
-        self.win.bind('<KeyPress-Q', self.q_key_pressed)
-        self.win.bind('<KeyPress-A', self.a_key_pressed)
-        self.win.bind('<KeyPress-W', self.w_key_pressed)
-        self.win.bind('<KeyPress-S', self.s_key_pressed)
-        self.win.bind('<KeyPress-E', self.e_key_pressed)
-        self.win.bind('<KeyPress-D', self.d_key_pressed)
-        self.win.bind('<KeyPress-R', self.r_key_pressed)
-        self.win.bind('<KeyPress-F', self.f_key_pressed)
+        self.win.bind('<KeyPress-Q>', self.q_key_pressed)
+        self.win.bind('<KeyPress-A>', self.a_key_pressed)
+        self.win.bind('<KeyPress-W>', self.w_key_pressed)
+        self.win.bind('<KeyPress-S>', self.s_key_pressed)
+        self.win.bind('<KeyPress-E>', self.e_key_pressed)
+        self.win.bind('<KeyPress-D>', self.d_key_pressed)
+        self.win.bind('<KeyPress-R>', self.r_key_pressed)
+        self.win.bind('<KeyPress-F>', self.f_key_pressed)
 
-        self.win.bind('<KeyRelease-Q', self.q_key_released)
-        self.win.bind('<KeyRelease-A', self.a_key_released)
-        self.win.bind('<KeyRelease-W', self.w_key_released)
-        self.win.bind('<KeyRelease-S', self.s_key_released)
-        self.win.bind('<KeyRelease-E', self.e_key_released)
-        self.win.bind('<KeyRelease-D', self.d_key_released)
-        self.win.bind('<KeyRelease-R', self.r_key_released)
-        self.win.bind('<KeyRelease-F', self.f_key_released)
+        self.win.bind('<KeyRelease-Q>', self.q_key_released)
+        self.win.bind('<KeyRelease-A>', self.a_key_released)
+        self.win.bind('<KeyRelease-W>', self.w_key_released)
+        self.win.bind('<KeyRelease-S>', self.s_key_released)
+        self.win.bind('<KeyRelease-E>', self.e_key_released)
+        self.win.bind('<KeyRelease-D>', self.d_key_released)
+        self.win.bind('<KeyRelease-R>', self.r_key_released)
+        self.win.bind('<KeyRelease-F>', self.f_key_released)
 
     def q_key_pressed(self, _):
         self.q_key = True
