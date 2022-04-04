@@ -10,7 +10,7 @@ class Reservoir:
         self.delta = 5
         self.name = name
 
-    def update(self, previous_list, key_press_up, key_press_down):
+    def update(self, previous_list, key_press_up, key_press_down, next_reservoir):
         # 流入後の液量の計算
         for prev in previous_list:
             self.volume += prev.out_flow
@@ -22,15 +22,29 @@ class Reservoir:
             self.out_flow_set_value -= self.delta
 
         # 流出量の計算
+        # -> 自身の液量考慮
         if self.out_flow_set_value > self.volume:
             out_flow = self.volume
         else:
             out_flow = self.out_flow_set_value
+        # -> 受け入れ側の液量考慮
+        out_flow = next_reservoir.acceptable_volume(additional_volume=out_flow)
 
         # 流出後の液量
         self.volume -= out_flow
         self.out_flow = out_flow
         print(f'Reservoir({self.name}), Volume: {self.volume}, Flow: {self.out_flow}')
+
+    def acceptable_volume(self, additional_volume):
+        if self.volume + additional_volume <= self.capacity:
+            # 容量に余裕があれば、追加の容量はすべて受け入れ可能
+            return additional_volume
+        elif self.capacity == self.volume:
+            # 容量が最大容量に到達していれば、受け入れ量は0
+            return 0
+        else:
+            # 容量に余裕はないが、最大容量に達してい無い場合は最大までの量を返す
+            return self.capacity - self.volume
 
 
 class ThreeStepsReservoir:
@@ -41,10 +55,10 @@ class ThreeStepsReservoir:
         self.reservoir3 = Reservoir(100, 30, default_out_flow=2, name='#3')
 
     def update(self, up0, down0, up1, down1, up2, down2, up3, down3):
-        self.main_reservoir.update([], up0, down0)
-        self.reservoir1.update([self.main_reservoir], up1, down1)
-        self.reservoir2.update([self.reservoir1], up2, down2)
-        self.reservoir3.update([self.reservoir2], up3, down3)
+        self.main_reservoir.update([], up0, down0, self.reservoir1)
+        self.reservoir1.update([self.main_reservoir], up1, down1, self.reservoir2)
+        self.reservoir2.update([self.reservoir1], up2, down2, self.reservoir3)
+        self.reservoir3.update([self.reservoir2], up3, down3, self.main_reservoir)
         self.main_reservoir.volume += self.reservoir3.out_flow
 
 
@@ -100,7 +114,7 @@ class Application:
         rv1.draw(self.can)
         rv2.draw(self.can)
         rv3.draw(self.can)
-        self.win.after(500, self.loop)
+        self.win.after(100, self.loop)
 
     def key_binding(self):
         self.win.bind('<KeyPress-Q>', self.q_key_pressed)
