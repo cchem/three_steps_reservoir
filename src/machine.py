@@ -33,7 +33,8 @@ class Reservoir:
         # 流出後の液量
         self.volume -= out_flow
         self.out_flow = out_flow
-        print(f'Reservoir({self.name}), Volume: {self.volume}, Flow: {self.out_flow}')
+        print(f'Reservoir({self.name}), Volume: {self.volume}, '
+              f'SetFlow: {self.out_flow_set_value}, ActualFlow: {self.out_flow}')
 
     def acceptable_volume(self, additional_volume):
         if self.volume + additional_volume <= self.capacity:
@@ -104,6 +105,7 @@ class Application:
 
     def loop(self):
         print('loop')
+        print(self.up0, self.down0, self.up1, self.down1, self.up2, self.down2, self.up3, self.down3)
         self.reservoir.update(self.up0, self.down0, self.up1, self.down1, self.up2, self.down2, self.up3, self.down3)
         rv0 = ReservoirViewer(20, 160, 20, 320, self.reservoir.main_reservoir)
         rv1 = ReservoirViewer(180, 250, 190, 340, self.reservoir.reservoir1)
@@ -114,7 +116,7 @@ class Application:
         rv1.draw(self.can)
         rv2.draw(self.can)
         rv3.draw(self.can)
-        self.win.after(100, self.loop)
+        self.win.after(200, self.loop)
 
     def key_binding(self):
         self.win.bind('<KeyPress-Q>', self.q_key_pressed)
