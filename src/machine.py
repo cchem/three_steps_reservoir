@@ -64,19 +64,17 @@ class ThreeStepsReservoir:
 
 
 class ReservoirViewer:
-    def __init__(self, left, right, top, bottom, reservoir: Reservoir):
+    def __init__(self, left, right, top, bottom):
         self.left = left
         self.right = right
         self.top = top
         self.bottom = bottom
 
+    def draw(self, can: tk.Canvas, reservoir: Reservoir):
         height = self.bottom - self.top
-        self.water_top = self.top + height * (reservoir.capacity - reservoir.volume) / reservoir.capacity
-        self.reservoir = reservoir
-
-    def draw(self, can: tk.Canvas):
+        water_top = self.top + height * (reservoir.capacity - reservoir.volume) / reservoir.capacity
         can.create_rectangle(self.left, self.top, self.right, self.bottom, fill='gray')
-        can.create_rectangle(self.left, self.water_top, self.right, self.bottom, fill='blue')
+        can.create_rectangle(self.left, water_top, self.right, self.bottom, fill='blue')
 
 
 class Application:
@@ -101,89 +99,21 @@ class Application:
         self.down2 = False
         self.up3 = False
         self.down3 = False
-        self.key_binding()
+
+        self.rv0 = ReservoirViewer(20, 160, 20, 320)
+        self.rv1 = ReservoirViewer(180, 250, 190, 340)
+        self.rv2 = ReservoirViewer(270, 340, 210, 360)
+        self.rv3 = ReservoirViewer(360, 430, 230, 380)
 
     def loop(self):
         print('loop')
-        print(self.up0, self.down0, self.up1, self.down1, self.up2, self.down2, self.up3, self.down3)
         self.reservoir.update(self.up0, self.down0, self.up1, self.down1, self.up2, self.down2, self.up3, self.down3)
-        rv0 = ReservoirViewer(20, 160, 20, 320, self.reservoir.main_reservoir)
-        rv1 = ReservoirViewer(180, 250, 190, 340, self.reservoir.reservoir1)
-        rv2 = ReservoirViewer(270, 340, 210, 360, self.reservoir.reservoir2)
-        rv3 = ReservoirViewer(360, 430, 230, 380, self.reservoir.reservoir3)
 
-        rv0.draw(self.can)
-        rv1.draw(self.can)
-        rv2.draw(self.can)
-        rv3.draw(self.can)
+        self.rv0.draw(self.can_main, self.reservoir.main_reservoir)
+        self.rv1.draw(self.can_main, self.reservoir.reservoir1)
+        self.rv2.draw(self.can_main, self.reservoir.reservoir2)
+        self.rv3.draw(self.can_main, self.reservoir.reservoir3)
         self.win.after(200, self.loop)
-
-    def key_binding(self):
-        self.win.bind('<KeyPress-Q>', self.q_key_pressed)
-        self.win.bind('<KeyPress-A>', self.a_key_pressed)
-        self.win.bind('<KeyPress-W>', self.w_key_pressed)
-        self.win.bind('<KeyPress-S>', self.s_key_pressed)
-        self.win.bind('<KeyPress-E>', self.e_key_pressed)
-        self.win.bind('<KeyPress-D>', self.d_key_pressed)
-        self.win.bind('<KeyPress-R>', self.r_key_pressed)
-        self.win.bind('<KeyPress-F>', self.f_key_pressed)
-
-        self.win.bind('<KeyRelease-Q>', self.q_key_released)
-        self.win.bind('<KeyRelease-A>', self.a_key_released)
-        self.win.bind('<KeyRelease-W>', self.w_key_released)
-        self.win.bind('<KeyRelease-S>', self.s_key_released)
-        self.win.bind('<KeyRelease-E>', self.e_key_released)
-        self.win.bind('<KeyRelease-D>', self.d_key_released)
-        self.win.bind('<KeyRelease-R>', self.r_key_released)
-        self.win.bind('<KeyRelease-F>', self.f_key_released)
-
-    def q_key_pressed(self, _):
-        self.up0 = True
-
-    def a_key_pressed(self, _):
-        self.down0 = True
-
-    def w_key_pressed(self, _):
-        self.up1 = True
-
-    def s_key_pressed(self, _):
-        self.down1 = True
-
-    def e_key_pressed(self, _):
-        self.up2 = True
-
-    def d_key_pressed(self, _):
-        self.down2 = True
-
-    def r_key_pressed(self, _):
-        self.up3 = True
-
-    def f_key_pressed(self, _):
-        self.down3 = True
-
-    def q_key_released(self, _):
-        self.up0 = False
-
-    def a_key_released(self, _):
-        self.down0 = False
-
-    def w_key_released(self, _):
-        self.up1 = False
-
-    def s_key_released(self, _):
-        self.down1 = False
-
-    def e_key_released(self, _):
-        self.up2 = False
-
-    def d_key_released(self, _):
-        self.down2 = False
-
-    def r_key_released(self, _):
-        self.up3 = False
-
-    def f_key_released(self, _):
-        self.down3 = False
 
     def run(self):
         self.loop()
