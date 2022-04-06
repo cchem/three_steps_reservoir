@@ -39,7 +39,7 @@ class Reservoir:
             # 容量が最大容量に到達していれば、受け入れ量は0
             return 0
         else:
-            # 容量に余裕はないが、最大容量に達してい無い場合は最大までの量を返す
+            # 容量に余裕はないが、最大容量に達していない場合は最大までの量を返す
             return self.capacity - self.volume
 
     def set_flow_up(self, _):
@@ -111,8 +111,7 @@ class ControlPanel:
 class Application:
     def __init__(self):
         win = tk.Tk()
-        # win.title('Three steps reservoir')
-        win.title('Test')
+        win.title('Three steps reservoir')
         win.geometry('900x610')
         win.resizable(False, False)
         self.win = win
@@ -141,7 +140,6 @@ class Application:
         self.panel3 = ControlPanel(340, 5, name='Reservoir3')
 
     def loop(self):
-        print('loop')
         self.reservoir.update()
 
         self.rv0.draw(self.can_main, self.reservoir.main_reservoir)
