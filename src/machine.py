@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import font
 
 
 class Reservoir:
@@ -77,19 +78,55 @@ class ReservoirViewer:
         can.create_rectangle(self.left, water_top, self.right, self.bottom, fill='blue')
 
 
+class Meter:
+    def __init__(self, x, y, width=5, height=1):
+        self.left = x
+        self.top = y
+        self.width = width
+        self.height = height
+
+    def update(self, can: tk.Canvas, val):
+        label = tk.Label(can, text=val, bg='black', fg='white', font=font.Font(size=20, weight='bold'),
+                         width=self.width, height=self.height)
+        label.place(x=self.left, y=self.top)
+
+
+class ControlPanel:
+    def __init__(self, x, y, name, width=90, height=170):
+        self.name = name
+
+        self.left = x
+        self.right = x + width
+        self.top = y
+        self.left = y + height
+
+        self.volume_meter = Meter(x + 20, y + 20)
+        self.flow_meter = Meter(x + 20, y + 95)
+
+    def update(self, can: tk.Canvas, reservoir: Reservoir):
+        self.volume_meter.update(can, reservoir.volume)
+        self.flow_meter.update(can, f'{reservoir.out_flow} / {reservoir.out_flow_set_value}')
+
+
 class Application:
     def __init__(self):
         win = tk.Tk()
-        win.title('Three steps reservoir')
-        win.geometry('640x512')
+        # win.title('Three steps reservoir')
+        win.title('Test')
+        win.geometry('900x610')
         win.resizable(False, False)
         self.win = win
 
-        can = tk.Canvas(bg='white', width=620, height=492)
-        can.place(x=10, y=10)
-        self.can = can
-
+        # 三段水槽の初期化
         self.reservoir = ThreeStepsReservoir()
+
+        # 液量描画用の画面の設定
+        self.can_main = tk.Canvas(bg='white', width=470, height=400)
+        self.can_main.place(x=10, y=10)
+
+        # コントロールパネル用の画面の設定
+        self.can_panel = tk.Canvas(bg='white', width=470, height=170)
+        self.can_panel.place(x=10, y=420)
 
         self.up0 = False
         self.down0 = False
@@ -105,6 +142,11 @@ class Application:
         self.rv2 = ReservoirViewer(270, 340, 210, 360)
         self.rv3 = ReservoirViewer(360, 430, 230, 380)
 
+        self.main_panel = ControlPanel(30, 5, name='Main Reservoir')
+        self.panel1 = ControlPanel(140, 5, name='Reservoir1')
+        self.panel2 = ControlPanel(240, 5, name='Reservoir2')
+        self.panel3 = ControlPanel(340, 5, name='Reservoir3')
+
     def loop(self):
         print('loop')
         self.reservoir.update(self.up0, self.down0, self.up1, self.down1, self.up2, self.down2, self.up3, self.down3)
@@ -113,6 +155,11 @@ class Application:
         self.rv1.draw(self.can_main, self.reservoir.reservoir1)
         self.rv2.draw(self.can_main, self.reservoir.reservoir2)
         self.rv3.draw(self.can_main, self.reservoir.reservoir3)
+
+        self.main_panel.update(self.can_panel, self.reservoir.main_reservoir)
+        self.panel1.update(self.can_panel, self.reservoir.reservoir1)
+        self.panel2.update(self.can_panel, self.reservoir.reservoir2)
+        self.panel3.update(self.can_panel, self.reservoir.reservoir3)
         self.win.after(200, self.loop)
 
     def run(self):
