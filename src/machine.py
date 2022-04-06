@@ -51,10 +51,10 @@ class Reservoir:
 
 class ThreeStepsReservoir:
     def __init__(self):
-        self.main_reservoir = Reservoir(1000, 800, default_out_flow=4, name='Main')
-        self.reservoir1 = Reservoir(100, 70, default_out_flow=3, name='#1')
-        self.reservoir2 = Reservoir(100, 50, default_out_flow=5, name='#2')
-        self.reservoir3 = Reservoir(100, 30, default_out_flow=2, name='#3')
+        self.main_reservoir = Reservoir(1000, 800, default_out_flow=0, name='Main')
+        self.reservoir1 = Reservoir(100, 70, default_out_flow=0, name='#1')
+        self.reservoir2 = Reservoir(100, 50, default_out_flow=0, name='#2')
+        self.reservoir3 = Reservoir(100, 30, default_out_flow=0, name='#3')
 
     def update(self):
         self.main_reservoir.update([], self.reservoir1)
