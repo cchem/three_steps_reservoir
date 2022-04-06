@@ -3,24 +3,18 @@ from tkinter import font
 
 
 class Reservoir:
-    def __init__(self, capacity, volume, default_out_flow=5, name=''):
+    def __init__(self, capacity, volume, default_out_flow=5, name='', setting_delta=1):
         self.capacity = capacity  # total volume
         self.volume = volume  # current volume
         self.out_flow_set_value = default_out_flow
         self.out_flow = 0
-        self.delta = 5
         self.name = name
+        self.setting_delta = setting_delta
 
-    def update(self, previous_list, key_press_up, key_press_down, next_reservoir):
+    def update(self, previous_list, next_reservoir):
         # 流入後の液量の計算
         for prev in previous_list:
             self.volume += prev.out_flow
-
-        # 設定流量の変更
-        if key_press_up:
-            self.out_flow_set_value += self.delta
-        if key_press_down:
-            self.out_flow_set_value -= self.delta
 
         # 流出量の計算
         # -> 自身の液量考慮
@@ -48,6 +42,12 @@ class Reservoir:
             # 容量に余裕はないが、最大容量に達してい無い場合は最大までの量を返す
             return self.capacity - self.volume
 
+    def set_flow_up(self, _):
+        self.out_flow_set_value += self.setting_delta
+
+    def set_flow_down(self, _):
+        self.out_flow_set_value -= self.setting_delta
+
 
 class ThreeStepsReservoir:
     def __init__(self):
@@ -56,11 +56,11 @@ class ThreeStepsReservoir:
         self.reservoir2 = Reservoir(100, 50, default_out_flow=5, name='#2')
         self.reservoir3 = Reservoir(100, 30, default_out_flow=2, name='#3')
 
-    def update(self, up0, down0, up1, down1, up2, down2, up3, down3):
-        self.main_reservoir.update([], up0, down0, self.reservoir1)
-        self.reservoir1.update([self.main_reservoir], up1, down1, self.reservoir2)
-        self.reservoir2.update([self.reservoir1], up2, down2, self.reservoir3)
-        self.reservoir3.update([self.reservoir2], up3, down3, self.main_reservoir)
+    def update(self):
+        self.main_reservoir.update([], self.reservoir1)
+        self.reservoir1.update([self.main_reservoir], self.reservoir2)
+        self.reservoir2.update([self.reservoir1], self.reservoir3)
+        self.reservoir3.update([self.reservoir2], self.main_reservoir)
         self.main_reservoir.volume += self.reservoir3.out_flow
 
 
@@ -128,20 +128,13 @@ class Application:
         self.can_panel = tk.Canvas(bg='white', width=470, height=170)
         self.can_panel.place(x=10, y=420)
 
-        self.up0 = False
-        self.down0 = False
-        self.up1 = False
-        self.down1 = False
-        self.up2 = False
-        self.down2 = False
-        self.up3 = False
-        self.down3 = False
-
+        # 水槽の様子を描画するクラスの設定
         self.rv0 = ReservoirViewer(20, 160, 20, 320)
         self.rv1 = ReservoirViewer(180, 250, 190, 340)
         self.rv2 = ReservoirViewer(270, 340, 210, 360)
         self.rv3 = ReservoirViewer(360, 430, 230, 380)
 
+        # 水槽のパラメータを描画するコントロールパネルの設定
         self.main_panel = ControlPanel(30, 5, name='Main Reservoir')
         self.panel1 = ControlPanel(140, 5, name='Reservoir1')
         self.panel2 = ControlPanel(240, 5, name='Reservoir2')
@@ -149,7 +142,7 @@ class Application:
 
     def loop(self):
         print('loop')
-        self.reservoir.update(self.up0, self.down0, self.up1, self.down1, self.up2, self.down2, self.up3, self.down3)
+        self.reservoir.update()
 
         self.rv0.draw(self.can_main, self.reservoir.main_reservoir)
         self.rv1.draw(self.can_main, self.reservoir.reservoir1)
