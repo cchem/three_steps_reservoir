@@ -92,7 +92,7 @@ class Meter:
 
 
 class ControlPanel:
-    def __init__(self, x, y, name, width=90, height=170):
+    def __init__(self, can: tk.Canvas, x, y, name, width=90, height=170):
         self.name = name
 
         self.left = x
@@ -102,6 +102,12 @@ class ControlPanel:
 
         self.volume_meter = Meter(x + 20, y + 20)
         self.flow_meter = Meter(x + 20, y + 95)
+
+        self.button_up = tk.Button(can, text='up')
+        self.button_up.place(x=x+20, y=70, width=90, height=30)
+
+        self.button_down = tk.Button(can, text='down')
+        self.button_down.place(x=x+20, y=130, width=90, height=30)
 
     def update(self, can: tk.Canvas, reservoir: Reservoir):
         self.volume_meter.update(can, reservoir.volume)
@@ -134,10 +140,21 @@ class Application:
         self.rv3 = ReservoirViewer(360, 430, 230, 380)
 
         # 水槽のパラメータを描画するコントロールパネルの設定
-        self.main_panel = ControlPanel(30, 5, name='Main Reservoir')
-        self.panel1 = ControlPanel(140, 5, name='Reservoir1')
-        self.panel2 = ControlPanel(240, 5, name='Reservoir2')
-        self.panel3 = ControlPanel(340, 5, name='Reservoir3')
+        self.main_panel = ControlPanel(self.can_panel, 30, 5, name='Main Reservoir')
+        self.panel1 = ControlPanel(self.can_panel, 140, 5, name='Reservoir1')
+        self.panel2 = ControlPanel(self.can_panel, 240, 5, name='Reservoir2')
+        self.panel3 = ControlPanel(self.can_panel, 340, 5, name='Reservoir3')
+
+        # ボタンの挙動の設定
+        self.main_panel.button_up.bind('<Button-1>', self.reservoir.main_reservoir.set_flow_up)
+        self.panel1.button_up.bind('<Button-1>', self.reservoir.reservoir1.set_flow_up)
+        self.panel2.button_up.bind('<Button-1>', self.reservoir.reservoir2.set_flow_up)
+        self.panel3.button_up.bind('<Button-1>', self.reservoir.reservoir3.set_flow_up)
+
+        self.main_panel.button_down.bind('<Button-1>', self.reservoir.main_reservoir.set_flow_down)
+        self.panel1.button_down.bind('<Button-1>', self.reservoir.reservoir1.set_flow_down)
+        self.panel2.button_down.bind('<Button-1>', self.reservoir.reservoir2.set_flow_down)
+        self.panel3.button_down.bind('<Button-1>', self.reservoir.reservoir3.set_flow_down)
 
     def loop(self):
         self.reservoir.update()
